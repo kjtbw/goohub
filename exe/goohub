@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
+# coding: utf-8
+require 'time'
+time = Time.now
+puts "start_ruby"
+puts time.iso8601(6)
+
 
 require "rubygems"
 
@@ -14,8 +20,27 @@ require 'googleauth/stores/file_token_store'
 require 'google/api_client/client_secrets'
 require 'google/apis/calendar_v3'
 require "clian"
+
+time = Time.now
+puts "before_goohub_require"
+puts time.iso8601(6)
+
+
 require "goohub"
+
+time = Time.now
+puts "after_goohub_require"
+puts time.iso8601(6)
+
+
 require 'goohub/command'
+
+time = Time.now
+puts "after_require_goohub_command"
+puts time.iso8601(6)
+
+
+require 'benchmark'
 
 Clian::Cli.bundler_rbenv_setup(__FILE__)
 
@@ -37,17 +62,52 @@ class GoohubCLI < Clian::Cli
 
       @config = Goohub::Config.create_from_file(options[:config] ||
                                                 DEFAULT_CONFIG_PATH)
+      @time_list = Hash.new
     end
   end
 
   def client
+    @client_call_n = 1 if @client_call_n == nil
     begin
+      get_time("start_client_func_#{@client_call_n}th")
       @client ||= Goohub::Client.new(@config.general, "goohub")
+      get_time("end_client_func_#{@client_call_n}th")
+      @client_call_n = @client_call_n + 1
+      return @client
     rescue Goohub::Client::AuthorizationError
       STDERR.print "ERROR: try goohub auth command.\n"
       exit(1)
     end
   end
+
+  def get_time(str)
+    flag = true # if you don't use, set flag to false
+    if flag
+      time = Time.now
+      @time_list[str] = time
+    end
+  end
+
+  def puts_time
+    puts "############start puts time###############"
+    @time_list.each_with_index { |(k, v), i|
+      puts "#{k}: #{v.iso8601(6)}"
+      puts v - @before_time if @before_time
+      @before_time = v
+    }
+    puts "############end puts time###############"
+  end
+
 end
 
+# for_eval
+p caller()[0]
+time = Time.now
+puts "before_goohub_start"
+puts time.iso8601(6)
+# exit()
 GoohubCLI.start(ARGV)
+
+time = Time.now
+puts "end_ruby"
+puts time.iso8601(6)
