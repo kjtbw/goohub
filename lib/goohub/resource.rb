@@ -28,7 +28,10 @@ module Goohub
 
     autoload :Event,                "#{dir}/event.rb"
     autoload :Calendar,             "#{dir}/calendar.rb"
+    autoload :Timestamp,            "#{dir}/timestamp.rb"
     autoload :EventCollection,      "#{dir}/event_collection.rb"
     autoload :CalendarCollection,   "#{dir}/calendar_collection.rb"
+    autoload :TimestampCollection,  "#{dir}/timestamp_collection.rb"
+
   end # module Resource
 end # module Goohub

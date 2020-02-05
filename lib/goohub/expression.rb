@@ -75,15 +75,15 @@ module Goohub
       end
 
       def read(e)
-        p "Not implemented"
+        # p "Not implemented"
       end
 
       def write(e, str)
-        p "Not implemented"
+        # p "Not implemented"
       end
 
       def format_tag(e)
-        p "Not implemented"
+        # p "Not implemented"
       end
 
       private

@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 require 'time'
-time = Time.now
+start_ruby_time = Time.now
 puts "start_ruby"
-puts time.iso8601(6)
+puts start_ruby_time.iso8601(6)
 
 
 require "rubygems"
@@ -21,23 +21,23 @@ require 'google/api_client/client_secrets'
 require 'google/apis/calendar_v3'
 require "clian"
 
-time = Time.now
-puts "before_goohub_require"
-puts time.iso8601(6)
+# time = Time.now
+# puts "before_goohub_require"
+# puts time.iso8601(6)
 
 
 require "goohub"
 
-time = Time.now
-puts "after_goohub_require"
-puts time.iso8601(6)
+# time = Time.now
+# puts "after_goohub_require"
+# puts time.iso8601(6)
 
 
 require 'goohub/command'
 
-time = Time.now
-puts "after_require_goohub_command"
-puts time.iso8601(6)
+# time = Time.now
+# puts "after_require_goohub_command"
+# puts time.iso8601(6)
 
 
 require 'benchmark'
@@ -63,15 +63,19 @@ class GoohubCLI < Clian::Cli
       @config = Goohub::Config.create_from_file(options[:config] ||
                                                 DEFAULT_CONFIG_PATH)
       @time_list = Hash.new
+      @list = Goohub::Resource::TimestampCollection.new
     end
   end
 
   def client
     @client_call_n = 1 if @client_call_n == nil
     begin
-      get_time("start_client_func_#{@client_call_n}th")
+      #get_time("start_client_func_#{@client_call_n}th")
+      #@list.dump.push(Goohub::Resource::Timestamp.new("start_client_func_#{@client_call_n}th", 5))
       @client ||= Goohub::Client.new(@config.general, "goohub")
-      get_time("end_client_func_#{@client_call_n}th")
+      #@list.dump.push(Goohub::Resource::Timestamp.new("end_client_func_#{@client_call_n}th", 2))
+
+      #get_time("end_client_func_#{@client_call_n}th")
       @client_call_n = @client_call_n + 1
       return @client
     rescue Goohub::Client::AuthorizationError
@@ -101,13 +105,24 @@ class GoohubCLI < Clian::Cli
 end
 
 # for_eval
-p caller()[0]
-time = Time.now
+# p caller()[0]
+before_goohub_start_time = Time.now
 puts "before_goohub_start"
-puts time.iso8601(6)
+puts before_goohub_start_time.iso8601(6)
+
+# list = Goohub::Resource::TimestampCollection.new
+# list.dump.push(Goohub::Resource::Timestamp.new("before_goohub_start", 1))
+# list.dump.push(Goohub::Resource::Timestamp.new("before_goohub_start2", 2))
+# list.print
 # exit()
 GoohubCLI.start(ARGV)
 
-time = Time.now
+end_ruby_time = Time.now
 puts "end_ruby"
-puts time.iso8601(6)
+puts end_ruby_time.iso8601(6)
+
+# p "start_ruby_time"
+# p start_ruby_time
+#start_func = @list.dump.find { |t| t.name == "start_func" }
+p "diff : before_goohub_start - start_ruby"
+p before_goohub_start_time - start_ruby_time
